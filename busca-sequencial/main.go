@@ -4,28 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math"
 	"strings"
-	"sync"
 )
-
-const MAX_GOROTINAS uint = 100 // maximo de go rotinas que podem ser criadas para processar os dados no sistema
-
-func particionarLista(s []string, sub uint) [][]string {
-	size := int(math.Ceil(float64(len(s)) / float64(sub)))
-	var list = make([][]string, 0)
-	var j int
-
-	for i := 0; i < len(s); i += size {
-		j += size
-		if j > len(s) {
-			j = len(s)
-		}
-
-		list = append(list, s[i:j])
-	}
-	return list
-}
 
 func lerArquivo(caminho, nomeArquivo *string) (erro error, data []byte) {
 	var arquivo = *nomeArquivo
@@ -47,16 +27,6 @@ func lerArquivo(caminho, nomeArquivo *string) (erro error, data []byte) {
 
 func obterLista(s string) []string {
 	return strings.Split(s, ",")
-}
-
-func processarBuscar(lista []string, controleRotina *sync.WaitGroup, valorBusca string, canal chan string) {
-	defer controleRotina.Done()
-	for i := range lista {
-		if lista[i] == valorBusca {
-			canal <- lista[i]
-		}
-	}
-
 }
 
 func main() {
